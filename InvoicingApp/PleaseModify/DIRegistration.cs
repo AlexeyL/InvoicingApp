@@ -1,7 +1,9 @@
 ﻿using DeveloperQuestions.LeaveAlone.Contracts;
 using DeveloperQuestions.LeaveAlone.Implementation;
 using DeveloperQuestions.LeaveAlone.Models;
-using DeveloperQuestions.PleaseModify.Services;
+using InvoicingApp.PleaseModify.Repositories;
+using InvoicingApp.PleaseModify.Services;
+using InvoicingApp.PleaseModify.Validators;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DeveloperQuestions.PleaseModify
@@ -12,7 +14,11 @@ namespace DeveloperQuestions.PleaseModify
         {
             services
                 .AddSingleton<IContext, DBContext>()
-                .AddScoped<IRepository<Invoice>, InvoiceRepository>();
+                .AddSingleton<IInvoiceValidator, InvoiceValidator>()
+                .AddScoped<IDateTimeProvider, DateTimeProvider>()
+                .AddScoped<IInvoiceService, InvoiceService>()
+                .AddScoped<IRepository<Invoice>, InvoiceRepository>()
+                .AddScoped<IInvoiceRepository, InvoiceRepository>();
         }
     }
 }
