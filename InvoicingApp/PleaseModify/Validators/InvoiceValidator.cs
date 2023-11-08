@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace InvoicingApp.PleaseModify.Validators
 {
+    /// <summary>
+    /// invoice validator
+    /// </summary>
     public class InvoiceValidator: IInvoiceValidator
     {
         public void ValidateTotalAmount(decimal taxAmount, decimal amount, decimal totalAmount)

@@ -4,6 +4,7 @@ using InvoicingApp.PleaseModify.Repositories;
 using InvoicingApp.PleaseModify.Services;
 using InvoicingApp.PleaseModify.Validators;
 using NSubstitute;
+using System.Linq.Expressions;
 
 namespace InvoicingApp.UnitTests
 {
@@ -73,6 +74,98 @@ namespace InvoicingApp.UnitTests
 
             // Assert
             Assert.Throws<ArgumentException>(act);
+        }
+
+        [Fact]
+        public void InvoiceAdd_ShouldSetCODPaymentDueDate_WhenPaymentTermIsCOD()
+        {
+            // Arrange
+            _dateTimeProvider.DateTimeNow.Returns(new DateTime(2023, 11, 6));
+            var invoice = _fixture.Build<Invoice>()
+                .With(i => i.TaxAmount, 100)
+                .With(i => i.Amount, 1000)
+                .With(i => i.TotalAmount, 1100)
+                .With(i => i.CreatedOn, new DateTime(2023, 11, 1))
+                .With(i => i.InvoiceNumber, "0123456789")
+                .With(i => i.CreatedById, "111")
+                .With(i => i.CustomerId, "1")
+                .With(i => i.PaymentTerms, PaymentTerms.COD)
+                .Create();
+
+            // Act
+            _invoiceService.Add(invoice);
+
+            // Assert
+            Assert.Equal(invoice.PaymentDueDate, _dateTimeProvider.DateTimeNow);
+        }
+
+        [Fact]
+        public void InvoiceAdd_ShouldSetCODPaymentDueDate_WhenPaymentTermIsNet20()
+        {
+            // Arrange
+            _dateTimeProvider.DateTimeNow.Returns(new DateTime(2023, 11, 6));
+            var invoice = _fixture.Build<Invoice>()
+                .With(i => i.TaxAmount, 100)
+                .With(i => i.Amount, 1000)
+                .With(i => i.TotalAmount, 1100)
+                .With(i => i.CreatedOn, new DateTime(2023, 11, 1))
+                .With(i => i.InvoiceNumber, "0123456789")
+                .With(i => i.CreatedById, "111")
+                .With(i => i.CustomerId, "1")
+                .With(i => i.PaymentTerms, PaymentTerms.Net20)
+                .Create();
+
+            // Act
+            _invoiceService.Add(invoice);
+
+            // Assert
+            Assert.Equal(invoice.PaymentDueDate, _dateTimeProvider.DateTimeNow.AddDays(20));
+        }
+
+        [Fact]
+        public void InvoiceAdd_ShouldSetCODPaymentDueDate_WhenPaymentTermIsNet30()
+        {
+            // Arrange
+            _dateTimeProvider.DateTimeNow.Returns(new DateTime(2023, 11, 6));
+            var invoice = _fixture.Build<Invoice>()
+                .With(i => i.TaxAmount, 100)
+                .With(i => i.Amount, 1000)
+                .With(i => i.TotalAmount, 1100)
+                .With(i => i.CreatedOn, new DateTime(2023, 11, 1))
+                .With(i => i.InvoiceNumber, "0123456789")
+                .With(i => i.CreatedById, "111")
+                .With(i => i.CustomerId, "1")
+                .With(i => i.PaymentTerms, PaymentTerms.Net30)
+                .Create();
+
+            // Act
+            _invoiceService.Add(invoice);
+
+            // Assert
+            Assert.Equal(invoice.PaymentDueDate, _dateTimeProvider.DateTimeNow.AddDays(30));
+        }
+
+        [Fact]
+        public void InvoiceAdd_ShouldSetCODPaymentDueDate_WhenPaymentTermIsNet60()
+        {
+            // Arrange
+            _dateTimeProvider.DateTimeNow.Returns(new DateTime(2023, 11, 6));
+            var invoice = _fixture.Build<Invoice>()
+                .With(i => i.TaxAmount, 100)
+                .With(i => i.Amount, 1000)
+                .With(i => i.TotalAmount, 1100)
+                .With(i => i.CreatedOn, new DateTime(2023, 11, 1))
+                .With(i => i.InvoiceNumber, "0123456789")
+                .With(i => i.CreatedById, "111")
+                .With(i => i.CustomerId, "1")
+                .With(i => i.PaymentTerms, PaymentTerms.Net60)
+                .Create();
+
+            // Act
+            _invoiceService.Add(invoice);
+
+            // Assert
+            Assert.Equal(invoice.PaymentDueDate, _dateTimeProvider.DateTimeNow.AddDays(60));
         }
     }
 }
